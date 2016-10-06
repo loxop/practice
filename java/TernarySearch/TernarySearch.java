@@ -9,6 +9,7 @@ class TernarySearch {
 		while(s <= e){
 			fp = s + (e - s) / 3;
 			sp = s + (e - s) * 2 / 3;
+			// System.out.format("%d%c %d%c %d%c %d%c\n", s, haystack[s],fp, haystack[fp], sp, haystack[sp], e, haystack[e]);
 			if (haystack[fp] == needle){
 				index = fp;
 				break;
@@ -52,7 +53,7 @@ class TernarySearch {
 			String[] dist_str = args[2].split(",");
 			char[][] dist_arr = new char[dist_str.length][];
 			for (int i = 0; i < dist_str.length; i++){
-				dist_arr[i] = dist_str.toCharArray();
+				dist_arr[i] = dist_str[i].toCharArray();
 			}
 		} else {
 			index = simpleTernarySearch(array, ch);
