@@ -1,3 +1,5 @@
+import java.util.Arrays;
+
 class TernarySearch {
 	public static final int DEFAULT_TEST_REPS = 10000;
 
@@ -6,9 +8,11 @@ class TernarySearch {
 		int e = haystack.length - 1;
 		int fp, sp;
 		int index = -1;
-		while(s <= e){
+		// System.out.format("\n%c\n", needle);
+		while(s <= e){ 
 			fp = s + (e - s) / 3;
 			sp = s + (e - s) * 2 / 3;
+
 			// System.out.format("%d%c %d%c %d%c %d%c\n", s, haystack[s],fp, haystack[fp], sp, haystack[sp], e, haystack[e]);
 			if (haystack[fp] == needle){
 				index = fp;
@@ -36,16 +40,19 @@ class TernarySearch {
 		int e = haystack.length - 1;
 		int fp, sp;
 		int index = -1;
+		int supposed_index = (int)(e * average_position);
+		// System.out.format("\n%c: %f,%d\n", needle, average_position, supposed_index);
 		while(s <= e){
 			fp = s + (e - s) / 3;
 			sp = s + (e - s) * 2 / 3;
 
-			// If average_position is still in valid range, narrow the section in which the average_position belongs to
-			if (average_position >= s && average_position <= e){
-				fp -= (fp - average_position) / 3;
-				sp -= (sp - average_position) / 3;
+			// If supposed_index is still in valid range, narrow the section in which the average_position belongs to
+			if (supposed_index >= s && supposed_index <= e){
+				fp -= (fp - supposed_index) / 2;
+				sp -= (sp - supposed_index) / 2;
 			}
 
+			// System.out.format("%d%c %d%c %d%c %d%c\n", s, haystack[s],fp, haystack[fp], sp, haystack[sp], e, haystack[e]);
 			if (haystack[fp] == needle){
 				index = fp;
 				break;
@@ -71,9 +78,15 @@ class TernarySearch {
 		double sum = 0.0;
 		int count = 0;
 		for (char[] record : data_history){
-			index = simpleTernarySearch(record, ch);
+			index = -1;
 			len = record.length;
-			if (index > 0){
+			for (int i = 0; i < len; i++){
+				if (record[i] == ch){
+					index = i;
+					break;
+				}
+			}
+			if (index >= 0){
 				sum += 1.0 * index / len;
 				count++;
 			}
@@ -85,8 +98,32 @@ class TernarySearch {
 		return sum / count;
 	}
 
-	static void compare(char[] haystack, char needle, double average_position){
-		
+	static void compare(char[] array, char[][] data_history, int reps){
+		int index;
+		long naive_start = System.nanoTime();
+		for (int i = 0; i < reps; i++){
+			for (int j = 0; j < array.length; j++){
+				index = simpleTernarySearch(array, array[j]);
+			}
+		}
+		long naive_elapsed = System.nanoTime() - naive_start;
+
+		// prepare all average_positions for all characters in array
+		double[] avg_pos_array = new double[array.length];
+		for (int i = 0; i < array.length; i++){
+			avg_pos_array[i] = calculateAveragePosition(data_history, array[i]);
+		}
+
+		long fast_start = System.nanoTime();
+		for (int i = 0; i < reps; i++){
+			for (int j = 0; j < array.length; j++){
+				index = fastTernarySearch(array, array[j], avg_pos_array[j]);
+			}
+		}
+		long fast_elapsed = System.nanoTime() - fast_start;
+
+		System.out.format("Naive: %dns\n", naive_elapsed);
+		System.out.format("Fast:  %dns\n", fast_elapsed);
 	}
 
 	public static void main(String[] args){
@@ -116,7 +153,7 @@ class TernarySearch {
 			for (int i = 0; i < dist_str.length; i++){
 				dist_arr[i] = dist_str[i].toCharArray();
 			}
-			double avg_position =  calculateAveragePosition(dist_arr, ch);
+			double avg_position = calculateAveragePosition(dist_arr, ch);
 			index = fastTernarySearch(array, ch, avg_position);
 			if (index < 0){
 				System.out.format("%c not found\n", ch);
@@ -124,21 +161,7 @@ class TernarySearch {
 				System.out.format("%c is at %d\n", ch, index + 1);
 			}
 			if (args.length > 3) {
-				int reps = Integer.parseInt(args[3]);
-				long naive_start = System.nanoTime();
-				for (int i = 0; i < reps; i++){
-					index = simpleTernarySearch(array, ch);
-				}
-				long naive_elapsed = System.nanoTime() - naive_start;
-
-				long fast_start = System.nanoTime();
-				for (int i = 0; i < reps; i++){
-					index = fastTernarySearch(array, ch, avg_position);
-				}
-				long fast_elapsed = System.nanoTime() - fast_start;
-
-				System.out.format("Naive: %ldns", naive_elapsed);
-				System.out.format("Fast: %ldns", fast_elapsed);
+				compare(array, dist_arr, Integer.parseInt(args[3]));
 			}
 		} else {
 			index = simpleTernarySearch(array, ch);
