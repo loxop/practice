@@ -70,6 +70,7 @@ class KnightDialer {
 	public static void main(String[] args){
 		int start = 1;
 		int length = 10;
+
 		if (args.length == 1) {
 			if (args[0].equals("pad")) {
 				print_dialpad();
