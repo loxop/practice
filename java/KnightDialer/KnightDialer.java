@@ -50,7 +50,7 @@ class KnightDialer {
 		}
 	}
 
-	public static long knight_dialer(int start, int length) {
+	public static long simple_knight_dialer(int start, int length) {
 		if (move_map == null){
 			init_move_map(length + 1);
 		}
@@ -60,11 +60,15 @@ class KnightDialer {
 		if (move_map[start][length] < 0){
 			long sum = 0;
 			for (int next: dict.get(start)) {
-				sum += knight_dialer(next, length - 1);
+				sum += simple_knight_dialer(next, length - 1);
 			}
 			move_map[start][length] = sum;
 		}
 		return move_map[start][length];
+	}
+
+	public static long multi_knight_dialer(int start, int length) {
+
 	}
 
 	public static void main(String[] args){
@@ -86,7 +90,7 @@ class KnightDialer {
 			length = Integer.parseInt(args[1]);
 		}
 
-		System.out.format("%d\n", knight_dialer(start, length));
+		System.out.format("%d\n", simple_knight_dialer(start, length));
 	}
 
 	/* util functions */
