@@ -4,7 +4,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
 
-class KnightDialer {
+import KnightDialer.*;
+
+public class KnightDialer {
 	/* Init constants */
 	public static final int PAD_WIDTH = 12;
 	public static final int PAD_HEIGHT = 16;
@@ -50,6 +52,7 @@ class KnightDialer {
 		}
 	}
 
+/*
 	public static long simple_knight_dialer(int start, int length) {
 		if (move_map == null){
 			init_move_map(length + 1);
@@ -66,10 +69,7 @@ class KnightDialer {
 		}
 		return move_map[start][length];
 	}
-
-	public static long multi_knight_dialer(int start, int length) {
-
-	}
+	*/
 
 	public static void main(String[] args){
 		int start = 1;
@@ -89,8 +89,11 @@ class KnightDialer {
 			start = Integer.parseInt(args[0]);
 			length = Integer.parseInt(args[1]);
 		}
+		
+		init_move_map(length + 1);
+		SimpleKnightDialer dialer = new SimpleKnightDialer(dict, move_map);
 
-		System.out.format("%d\n", simple_knight_dialer(start, length));
+		System.out.format("%d\n", dialer.simpleKnightDialer(start, length));
 	}
 
 	/* util functions */
