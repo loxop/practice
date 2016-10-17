@@ -1,6 +1,5 @@
 import java.util.Arrays;
-import java.util.Map;
-import java.util.HashMap;
+import java.util.Map; import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -85,15 +84,31 @@ public class KnightDialer {
 			}
 		}
 
-		if (args.length == 2) {
+		if (args.length >= 2) {
 			start = Integer.parseInt(args[0]);
 			length = Integer.parseInt(args[1]);
 		}
 		
 		init_move_map(length + 1);
-		SimpleKnightDialer dialer = new SimpleKnightDialer(dict, move_map);
+		long result = -1;
+		if (args.length <= 2 || (args.length >= 3 && args[2].equals("compare"))) {
+			SimpleKnightDialer dialer = new SimpleKnightDialer(dict, move_map);
+			long begin = System.nanoTime();
+			result = dialer.simpleKnightDialer(start, length);
+			System.out.format("Simple: %dns\n", System.nanoTime() - begin);
+		}
 
-		System.out.format("%d\n", dialer.simpleKnightDialer(start, length));
+		if (args.length >= 3) {
+			init_move_map(length + 1);
+			result = -1;
+
+			DistributedKnightDialer dialer = new DistributedKnightDialer(dict, move_map);
+			long begin = System.nanoTime();
+			result = dialer.distributedKnightDialer(start, length);
+			System.out.format("Multi : %dns\n", System.nanoTime() - begin);
+		}
+
+		System.out.format("result : %d\n", result);
 	}
 
 	/* util functions */
