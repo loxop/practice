@@ -12,29 +12,33 @@ public class CamelTrie {
 
 	// insert a word to this Trie, returns false if already exist
 	public boolean insert(String word) {
-		int at;
+		int at = -1;
 		boolean flag = false;
 		CamelTrieNode p = root;
-		for (int i = 0; i < word.length; i++) {
-			at = p.children.indexOf(word.charAt(i));
+		for (int i = 0; i < word.length(); i++) {
+			at = p.childIndex(word.charAt(i));
 			if (at < 0) {
 				p.dump(word, i);
 				flag = true;
-			} else {
-				p = children.get(at);
+				break;
 			}
+			p = p.child(at);
 		}
+		System.out.format("%s\n", root);
 		return flag;
 	}
 
-	public boolean contains(Sring prefix) {
-		TrieNode p = root;
-		int at;
-		for (int i = 0; i < prefix.length; i++){
-			at = p.children.indexOf(prefix.charAt(i));
-			if (at >= 0) {
+	public boolean contains(String prefix) {
+		CamelTrieNode p = root;
+		int at = -1;
+		for (int i = 0; i < prefix.length(); i++){
+			at = p.childIndex(prefix.charAt(i));
+			if (at < 0) {
+				return false;
 			}
+			p = p.child(at);
 		}
+		return true;
 	}
 }
 
@@ -44,8 +48,8 @@ class CamelTrieNode {
 
 	CamelTrieNode(char c){
 		// init children list on first use, to reduce memory usage
-		children = null;
 		this.c = c;
+		children = null;
 	}
 
 	void addChild(char c) {
@@ -63,17 +67,40 @@ class CamelTrieNode {
 		return hasChildren() && children.contains(c);
 	}
 
+	int childIndex(char c) {
+		if (children == null) {
+			return -1;
+		}
+		return children.indexOf(c);
+	}
+
+	CamelTrieNode child(int index) {
+		if (children != null && index >= 0 && children.size() > index ){
+			return children.get(index);
+		}
+		return null;
+	}
+
 	// Used for 'dumping' a new string to a leaf node
 	void dump(String s, int startsAt) {
-		TrieNode p = this;
-		if (p.hasChildren()){
-			System.out.format("Error: %c already has children\n", p.c);
-			return;
+		CamelTrieNode p = this;
+		for (int i = startsAt; i < s.length(); i++) {
+			p.addChild(s.charAt(i));
+			p = p.child(p.children.size() - 1);
 		}
-		for (int i = startsAt; i < s.length(), i++) {
-			p.addChild(s.charAt[i]);
-			p = p.children.get(0);
+	}
+	
+	public String toString() {
+		return "Node(" + c + ")-" + children; 
+	}
+
+	public boolean equals(Object o) {
+		if (o instanceof CamelTrieNode) {
+			return ((CamelTrieNode)o).c == c;
+		} else if (o instanceof Character) {
+			return c == (Character)o;
 		}
+		return false;
 	}
 }
 
