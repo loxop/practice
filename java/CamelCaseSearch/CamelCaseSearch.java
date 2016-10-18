@@ -1,10 +1,10 @@
-import CamelTrie.*;
+import Trie.*;
 
 public class CamelCaseSearch {
-	static CamelTrie t;
+	static Trie t;
 
 	public static void main(String args[]) {
-		t = new CamelTrie();
+		t = new Trie();
 		t.insert("Apple");
 		t.insert("Banana");
 		t.insert("Cooconut");

@@ -1,20 +1,20 @@
-package CamelTrie;
+package Trie;
 
 import java.util.List;
-import java.util.LinkedList;
+import java.util.ArrayList;
 
-public class CamelTrie {
-	CamelTrieNode root;
+public class Trie {
+	TrieNode root;
 
-	public CamelTrie() {
-		root = new CamelTrieNode(Character.MIN_VALUE);
+	public Trie() {
+		root = new TrieNode(Character.MIN_VALUE);
 	}
 
 	// insert a word to this Trie, returns false if already exist
 	public boolean insert(String word) {
 		int at = -1;
 		boolean flag = false;
-		CamelTrieNode p = root;
+		TrieNode p = root;
 		for (int i = 0; i < word.length(); i++) {
 			at = p.childIndex(word.charAt(i));
 			if (at < 0) {
@@ -24,12 +24,11 @@ public class CamelTrie {
 			}
 			p = p.child(at);
 		}
-		System.out.format("%s\n", root);
 		return flag;
 	}
 
 	public boolean contains(String prefix) {
-		CamelTrieNode p = root;
+		TrieNode p = root;
 		int at = -1;
 		for (int i = 0; i < prefix.length(); i++){
 			at = p.childIndex(prefix.charAt(i));
@@ -40,13 +39,21 @@ public class CamelTrie {
 		}
 		return true;
 	}
+
+	public CamelSearchResult camelSearch(String key) {
+	}
 }
 
-class CamelTrieNode {
-	char c;
-	List<CamelTrieNode> children;
+class CamelSearchResult {
+	String prefix;
+	TrieNode branch;
+}
 
-	CamelTrieNode(char c){
+class TrieNode {
+	char c;
+	List<TrieNode> children;
+
+	TrieNode(char c){
 		// init children list on first use, to reduce memory usage
 		this.c = c;
 		children = null;
@@ -54,9 +61,9 @@ class CamelTrieNode {
 
 	void addChild(char c) {
 		if (children == null) {
-			children = new LinkedList<CamelTrieNode>();
+			children = new ArrayList<TrieNode>();
 		}
-		children.add(new CamelTrieNode(c));
+		children.add(new TrieNode(c));
 	}
 
 	boolean hasChildren() {
@@ -68,13 +75,17 @@ class CamelTrieNode {
 	}
 
 	int childIndex(char c) {
-		if (children == null) {
-			return -1;
+		if (children != null) {
+			for (int i = 0; i < children.size(); i++){
+				if (children.get(i).c == c) {
+					return i;
+				}
+			}
 		}
-		return children.indexOf(c);
+		return -1;
 	}
 
-	CamelTrieNode child(int index) {
+	TrieNode child(int index) {
 		if (children != null && index >= 0 && children.size() > index ){
 			return children.get(index);
 		}
@@ -83,7 +94,7 @@ class CamelTrieNode {
 
 	// Used for 'dumping' a new string to a leaf node
 	void dump(String s, int startsAt) {
-		CamelTrieNode p = this;
+		TrieNode p = this;
 		for (int i = startsAt; i < s.length(); i++) {
 			p.addChild(s.charAt(i));
 			p = p.child(p.children.size() - 1);
@@ -92,15 +103,6 @@ class CamelTrieNode {
 	
 	public String toString() {
 		return "Node(" + c + ")-" + children; 
-	}
-
-	public boolean equals(Object o) {
-		if (o instanceof CamelTrieNode) {
-			return ((CamelTrieNode)o).c == c;
-		} else if (o instanceof Character) {
-			return c == (Character)o;
-		}
-		return false;
 	}
 }
 
