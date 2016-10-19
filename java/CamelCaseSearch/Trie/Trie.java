@@ -2,6 +2,7 @@ package Trie;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class Trie {
 	TrieNode root;
@@ -22,7 +23,7 @@ public class Trie {
 				flag = true;
 				break;
 			}
-			p = p.child(at);
+			p = p.childAt(at);
 		}
 
 		// case of inserting word="App" when "Apple" is in Trie
@@ -56,19 +57,24 @@ public class Trie {
 		return true;
 	}
 
-	public List<CamelSearchResult> camelSearch(String key) {
-		List<CamelSearchResult> result = new ArrayList<CamelSearchResult>();
-		TrieNode p = root;
-		int index = -1;
-		String prefix = "";
-		for (int i = 0; i < key.length(); i++) {
-			char c = key.charAt(i);
-			if (Character.isUppercase(c) {
-				while (Character.isLowerCase(p.c)){
-				}
+	public List<String> camelSearch(String key){
+		return camelDFS("", root, key, 0);
+	}
+
+	public List<String> camelDFS(String prefix, TrieNode node, String key, int key_index) {
+		List<String> result = new LinkedList<String>();
+		for (TrieNode child: node.children){
+			if (child.isEndPoint()) {
+				result.add(prefix);
+				continue;
+			}
+			if (key.length() <= key_index || (Character.isUpperCase(key.charAt(key_index)) && Character.isLowerCase(child.c))) {
+				result.addAll(camelDFS(prefix + child.c, child, key, key_index));
+			} else if(key.charAt(key_index) == child.c) {
+				result.addAll(camelDFS(prefix + child.c, child, key, key_index + 1));
 			}
 		}
-		return null;
+		return result;
 	}
 
 	public String toString() {
@@ -141,6 +147,10 @@ class TrieNode {
 
 	boolean hasEndPoint() {
 		return indexOfChild(Character.MIN_VALUE) >= 0;
+	}
+
+	boolean isEndPoint() {
+		return c == Character.MIN_VALUE;
 	}
 	
 	public String toString() {
