@@ -16,37 +16,86 @@ public class Trie {
 		boolean flag = false;
 		TrieNode p = root;
 		for (int i = 0; i < word.length(); i++) {
-			at = p.childIndex(word.charAt(i));
+			at = p.indexOfChild(word.charAt(i));
 			if (at < 0) {
-				p.dump(word, i);
+				dump(p, word, i);
 				flag = true;
 				break;
 			}
 			p = p.child(at);
 		}
+
+		// case of inserting word="App" when "Apple" is in Trie
+		if (!flag && !p.hasEndPoint()) {
+			p.addEndPoint();
+			flag = true;
+		}
+
 		return flag;
+	}
+
+	// Used for 'dumping' a new string to a leaf node
+	void dump(TrieNode p, String s, int startsAt) {
+		for (int i = startsAt; i < s.length(); i++) {
+			p.addChild(s.charAt(i));
+			p = p.childAt(p.children.size() - 1);
+		}
+		p.addEndPoint();
 	}
 
 	public boolean contains(String prefix) {
 		TrieNode p = root;
-		int at = -1;
+		int index = -1;
 		for (int i = 0; i < prefix.length(); i++){
-			at = p.childIndex(prefix.charAt(i));
-			if (at < 0) {
+			index = p.indexOfChild(prefix.charAt(i));
+			if (index < 0) {
 				return false;
 			}
-			p = p.child(at);
+			p = p.childAt(index);
 		}
 		return true;
 	}
 
-	public CamelSearchResult camelSearch(String key) {
+	public List<CamelSearchResult> camelSearch(String key) {
+		List<CamelSearchResult> result = new ArrayList<CamelSearchResult>();
+		TrieNode p = root;
+		int index = -1;
+		String prefix = "";
+		for (int i = 0; i < key.length(); i++) {
+			char c = key.charAt(i);
+			if (Character.isUppercase(c) {
+				while (Character.isLowerCase(p.c)){
+				}
+			}
+		}
+		return null;
+	}
+
+	public String toString() {
+		return root.toString();
 	}
 }
 
 class CamelSearchResult {
 	String prefix;
 	TrieNode branch;
+	
+	CamelSearchResult(String p, TrieNode b){
+		prefix = p;
+		branch = b;
+	}
+
+	public void printOut(){	
+		String str = prefix + branch.c;
+		if (branch.children != null) {
+			if (branch.hasEndPoint()) {
+				System.out.println(str);
+			}
+			for (TrieNode child: branch.children){
+				new CamelSearchResult(str, child).printOut();
+			}
+		}
+	}
 }
 
 class TrieNode {
@@ -66,15 +115,7 @@ class TrieNode {
 		children.add(new TrieNode(c));
 	}
 
-	boolean hasChildren() {
-		return children != null;
-	}
-
-	boolean hasChild(char c) {
-		return hasChildren() && children.contains(c);
-	}
-
-	int childIndex(char c) {
+	int indexOfChild(char c) {
 		if (children != null) {
 			for (int i = 0; i < children.size(); i++){
 				if (children.get(i).c == c) {
@@ -85,24 +126,25 @@ class TrieNode {
 		return -1;
 	}
 
-	TrieNode child(int index) {
+	TrieNode childAt(int index) {
 		if (children != null && index >= 0 && children.size() > index ){
 			return children.get(index);
 		}
 		return null;
 	}
 
-	// Used for 'dumping' a new string to a leaf node
-	void dump(String s, int startsAt) {
-		TrieNode p = this;
-		for (int i = startsAt; i < s.length(); i++) {
-			p.addChild(s.charAt(i));
-			p = p.child(p.children.size() - 1);
+	void addEndPoint() {
+		if (!hasEndPoint()) {
+			addChild(Character.MIN_VALUE);
 		}
+	}
+
+	boolean hasEndPoint() {
+		return indexOfChild(Character.MIN_VALUE) >= 0;
 	}
 	
 	public String toString() {
-		return "Node(" + c + ")-" + children; 
+		return "(" + c + ")-" + children; 
 	}
 }
 
