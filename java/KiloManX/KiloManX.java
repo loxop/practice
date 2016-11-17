@@ -3,18 +3,17 @@ import java.util.PriorityQueue;
 public class KiloManX {
 	public static void main(String[] args){
 		KiloManX x = new KiloManX();
-		String[] dc = {"070", "500", "140"};
-		int[] bh = {150, 150, 150};
+		// String[] dc = {"070", "500", "140"};
+		// int[] bh = {150, 150, 150};
 
-		// String[] dc = {"198573618294842", "159819849819205", "698849290010992", "000000000000000", "139581938009384", "158919111891911", "182731827381787", "135788359198718", "187587819218927", "185783759199192", "857819038188122", "897387187472737", "159938981818247", "128974182773177", "135885818282838"};
-		// int[] bh = {157, 1984, 577, 3001, 2003, 2984, 5988, 190003,9000, 102930, 5938, 1000000, 1000000, 5892, 38};
+		String[] dc = {"198573618294842", "159819849819205", "698849290010992", "000000000000000", "139581938009384", "158919111891911", "182731827381787", "135788359198718", "187587819218927", "185783759199192", "857819038188122", "897387187472737", "159938981818247", "128974182773177", "135885818282838"};
 		System.out.println(x.leastShots(dc, bh));
 	}
 
     public int leastShots(String[] damageChart, int[] bossHealth){
         // Prep: init values
         int n = damageChart.length;
-        int weapons[] = new int[n];
+        // int weapons[] = new int[n];
         PriorityQueue<Node> pq = new PriorityQueue<Node>();
 
         // Start: add start node into queue
@@ -32,6 +31,7 @@ System.out.println("c: " + head.cost + ", w: " + head.weapon + ", b: " + head.bo
             }
 
 			// Update weapon collection with strongest one from each weapon
+			/*
             if (head.boss >= 0){
 				System.out.print("w: ");
                 for (int i = 0; i < n; i++) {
@@ -40,19 +40,24 @@ System.out.println("c: " + head.cost + ", w: " + head.weapon + ", b: " + head.bo
                 }
 				System.out.println("");
             }
+			*/
             
 	        // list up all neighbors by adding cost to get there, add them into pq
             for (int i = 0; i < n; i++){
-                if ( (head.weapon & (0x0001 << i)) == 0x0001) { // already visited node
+                if ( ((head.weapon >> i) & 0x0001) == 0x0001) { // already visited node
                     continue;
                 }
                 // calculate min cost get to this neighbor
                 int health = bossHealth[i];
 				int minCost = health;
-                if (weapons[i] > 0){
-                    minCost = health / weapons[i];
-                    minCost += (health % weapons[i] > 0)? 1 : 0;
-                }
+				for(int j = 0; j < n; j++){
+					if (i != j && ((head.weapon >> j) & 0x0001 == 0x0001)){
+						int force = damageChart[j].charAt(i) - '0';
+						int cost = health / force;
+						cost += (health % force > 0)? 1 : 0;
+						minCost = (cost < minCost)? cost : minCost;
+					}
+				}
                 pq.add(new Node(head.cost + minCost, head.weapon | (0x0001 << i), i));
             }
         }
