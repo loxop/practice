@@ -1,3 +1,5 @@
+package DungeonEscape;
+
 import java.util.PriorityQueue;
 
 public class DungeonEscape {
@@ -67,9 +69,10 @@ public class DungeonEscape {
 				if (nextLevel >= depth || nextEasting >= width || nextEasting < 0){
 					continue; // crosses boundary
 				}
-				if ( (depth - nextLevel) * width <= nextCost) {
+				if ( nextLevel >= 0 && ( (depth - nextLevel) * width <= nextCost)) {
 					continue; // drown
 				}
+
 				pq.add(new Room(nextLevel, nextEasting, nextCost));
 			}
 		}
