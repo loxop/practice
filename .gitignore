@@ -3,4 +3,5 @@ pdfs
 *.class
 words*m.txt
 *.tar
+*.swp
 
