@@ -60,6 +60,9 @@ public class SmartWordToy {
 		for (int i = 0; i < forbid.length; i++) {
 			forbidMap[i] = forbid[i].split(" ");
 		}
+		if (isForbidden(end)){
+			return -1;
+		}
 
 		PriorityQueue<Node> pq = new PriorityQueue<Node>();
 		pq.add(new Node(start, 0));
