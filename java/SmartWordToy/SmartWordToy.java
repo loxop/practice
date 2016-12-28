@@ -70,7 +70,7 @@ public class SmartWordToy {
 
 		while (!pq.isEmpty()) {
 			Node n = pq.poll();
-			System.out.println("Polled: " + n.word);
+			// System.out.println("Polled: " + n.word);
 			int w = convertWordToInt(n.word);
 			if (w == e){
 				return n.cost;
@@ -84,11 +84,11 @@ public class SmartWordToy {
 			String[] next = nextWords(n.word);
 			for (String n_word: next){
 				if (isForbidden(n_word)) {
-					System.out.println("Forbidden: " + n_word);
+					// System.out.println("Forbidden: " + n_word);
 					continue;
 				}
 				pq.add(new Node(n_word, n.cost + 1));
-					System.out.println("Added: " + n_word);
+					// System.out.println("Added: " + n_word);
 			}
 		}
 
@@ -97,9 +97,8 @@ public class SmartWordToy {
 
 	public static void main(String[] args){
 		String start = "aaaa";
-		String end = "bbbb";
-		//String[] forbid = {"a a a z", "a a z a", "a z a a", "z a a a", "a z z z", "z a z z", "z z a z", "z z z a"};
-		String[] forbid = {"b b b b"};
+		String end = "kkkk";
+		String[] forbid = {};
 		SmartWordToy toy = new SmartWordToy();
 		System.out.println("" + toy.minPresses(start, end, forbid));
 	}
