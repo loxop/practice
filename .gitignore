@@ -1,7 +1,7 @@
 pdfs
 *.out
 *.class
-words*m.txt
+words*m*.txt
 *.tar
 *.swp
 
