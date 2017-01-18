@@ -16,7 +16,7 @@ public class TopologicalSort {
 	}
 
 	void topological_sort() {
-		List<Integer> remain = new LinkedList<Integer();
+		List<Integer> remain = new LinkedList<Integer>();
 		for (int i = 1; i < arr.length; i++){
 			remain.add(i);
 		}
@@ -24,7 +24,7 @@ public class TopologicalSort {
 		while (!remain.isEmpty()){
 			int l = next_leaf(remain.get(0));
 			result.add(0, l);
-			remain.remove(l);
+			remain.remove(new Integer(l));
 		}
 		for (int v: result) {
 			System.out.print(v + " ");
